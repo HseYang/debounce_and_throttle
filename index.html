@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>防抖、节流</title>
+	</head>
+	<body>
+		<button onclick="test1()">防抖 点击第一次执行</button>
+		<button onclick="test2()">防抖 点击最后一次执行</button>
+		<button onclick="test3()">节流 每次都“延迟”执行</button>
+		<button onclick="test4()">节流 每次都“及时”执行</button>
+
+		<script type="text/javascript">
+			/*
+			 
+			 * wait: 延迟多长时间执行
+			 * 
+			 * immediate: 是否立即执行(默认为true) 为true时 第一次点击的时候会触发 为false时 最后一次停止点击的时候会触发
+			 * 
+			 * throttle : 是否节流(默认是false) 当为true时 immediate为false 每次都“延迟”执行 immediate为true 每次都“及时”执行
+			 * 
+			 * */
+			var debounce = function(func, wait = 1000, immediate = true, throttle = false) {
+				let timeout, args, context, timestamp, result
+				const later = function() {
+					// 据上一次触发时间间隔
+					const last = +new Date() - timestamp
+					// 上次被包装函数被调用时间间隔last小于设定时间间隔wait
+					if(last < wait && last > 0 && !throttle) {
+						timeout = setTimeout(later, wait - last)
+					} else {
+						timeout = null
+						// 如果设定为immediate为true 第一次点击的时候会触发 immediate为false 最后一次停止点击的时候会触发
+						if(!immediate) {
+							result = func.apply(context, args)
+							if(!timeout) context = args = null
+						}
+					}
+				}
+				return function(...args) {
+					context = this
+					timestamp = +new Date()
+					const callNow = immediate && !timeout
+					// 如果延时不存在，重新设定延时
+					if(!timeout) timeout = setTimeout(later, wait)
+					if(callNow) {
+						result = func.apply(context, args)
+						context = args = null
+					}
+					return result
+				}
+			}
+
+			var test1 = debounce(function() {
+				console.log("防抖 点击第一次执行")
+			}, 1000)
+
+			var test2 = debounce(function() {
+				console.log("防抖 点击最后一次执行")
+			}, 1000, false)
+
+			var test3 = debounce(function() {
+				console.log("节流 每次都“延迟”执行")
+			}, 1000, false, true)
+			
+			var test4 = debounce(function() {
+				console.log("节流 每次都“及时”执行")
+			}, 1000, true, true)
+		</script>
+	</body>
+
+</html>
