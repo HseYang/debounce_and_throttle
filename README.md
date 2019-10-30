@@ -8,7 +8,8 @@
 	
 ### 使用方法:
 	
-   > <script type="text/javascript">
+   ```
+   <script type="text/javascript">
 		// 具体方法可看index.html文件 有demo演示
    
 		var debounce = function(func, wait = 1000, immediate = true, throttle = false) {
@@ -32,3 +33,4 @@
 		}, 1000, true, true)
 	   
    </script>
+   ```
